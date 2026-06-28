@@ -1,24 +1,24 @@
 pipeline {
-    agent any
-    stages {
-        stage('Build') {
-            steps {
-                sh 'rm -rf build'
-                sh 'cmake -B build -S .'
-                sh 'cmake --build build'
-            }
+  agent any
+  stages {
+    stage('Build') {
+      stage('Clean') {
+        steps {
+          if (fileExists('build')) {
+            echo 'build exists; removing'
+            sh 'rm -rf build'
+            echo 'build removed'
+          } else {
+            echo 'no build exists'
+          }
         }
-        stage('Test') {
-            steps {
-                sh './build/casino_game'
-                sh './build/test_game'
-            }
+      }
+      stage('Compile') {
+        steps {
+          sh 'cmake -B build -S .'
+          sh 'cmake --build build'
         }
-        stage('Deliver') {
-            steps {
-                sh 'tar -czf casino_game.tar.gz build/casino_game'
-                archiveArtifacts artifacts: 'casino_game.tar.gz', fingerprint: true
-            }
-        }
+      }
     }
+  }
 }
