@@ -1,8 +1,10 @@
 pipeline {
   agent any
   stages {
+
     stage('Build') {
       stages {
+
         stage('Clean') {
           steps {
             script {
@@ -16,13 +18,35 @@ pipeline {
             }
           }
         }
+
         stage('Compile') {
           steps {
             sh 'cmake -B build -S .'
             sh 'cmake --build build'
           }
         }
+        
       }
     }
+    
+    stage('Test') {
+      parallel {
+
+        stage('Unit Test') {
+          steps {
+            sh './build/casino_game'
+            sh './build/test_game'
+          }
+        }
+
+        stage('SAST') {
+          steps {
+            echo 'mock SAST'
+          }
+        }
+
+      }
+    }
+
   }
 }
