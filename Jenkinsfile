@@ -5,12 +5,14 @@ pipeline {
       stages {
         stage('Clean') {
           steps {
-            if (fileExists('build')) {
-              echo 'build exists; removing'
-              sh 'rm -rf build'
-              echo 'build removed'
-            } else {
-              echo 'no build exists'
+            script {
+              if (fileExists('build')) {
+                echo 'build exists; removing'
+                sh 'rm -rf build'
+                echo 'build removed'
+              } else {
+                echo 'no build exists'
+              }
             }
           }
         }
