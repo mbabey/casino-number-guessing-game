@@ -48,5 +48,12 @@ pipeline {
       }
     }
 
+    stage('Package') {
+      steps {
+        sh 'tar -czf casino_game.tar.gz build/casino_game'
+        archiveArtifacts artifacts: 'casino_game.tar.gz', fingerprint: true
+      }
+    }
+
   }
 }
