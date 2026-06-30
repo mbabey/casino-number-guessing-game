@@ -26,7 +26,7 @@ pipeline {
 
         stage('Configure Build Dependencies') {
           steps {
-            sh 'conan profile detect'
+            sh 'conan profile detect --force'
           }
         }
       
