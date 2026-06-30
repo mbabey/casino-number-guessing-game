@@ -8,28 +8,30 @@ pipeline {
   stages {
 
     stage('Pre') {
+      stages {
 
-      stage('Clean') {
-        steps {
-          script {
-            if (fileExists('${BUILD_DIR}')) {
-              echo 'build exists; removing'
-              sh "rm -rf ${BUILD_DIR}"
-              echo 'build removed'
-            } else {
-              echo 'no build exists'
+        stage('Clean') {
+          steps {
+            script {
+              if (fileExists('${BUILD_DIR}')) {
+                echo 'build exists; removing'
+                sh "rm -rf ${BUILD_DIR}"
+                echo 'build removed'
+              } else {
+                echo 'no build exists'
+              }
             }
           }
         }
-      }
 
-      stage('Install Dependencies') {
-        steps {
-          sh 'pip install conan'
-          sh 'conan profile detect'
+        stage('Install Dependencies') {
+          steps {
+            sh 'pip install conan'
+            sh 'conan profile detect'
+          }
         }
+      
       }
-
     }
 
     stage('Build') {
