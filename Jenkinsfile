@@ -6,32 +6,17 @@ pipeline {
   }
 
   stages {
-
-    stage('Pre') {
-      stages {
-
-        stage('Clean') {
-          steps {
-            script {
-              if (fileExists('${BUILD_DIR}')) {
-                echo 'build exists; removing'
-                sh "rm -rf ${BUILD_DIR}"
-                echo 'build removed'
-              } else {
-                echo 'no build exists'
-              }
-            }
+    stage('Clean') {
+      steps {
+        script {
+          if (fileExists('${BUILD_DIR}')) {
+            echo 'build exists; removing'
+            sh "rm -rf ${BUILD_DIR}"
+            echo 'build removed'
+          } else {
+            echo 'no build exists'
           }
         }
-
-        stage('Install Build Dependencies') {
-          steps {
-            sh 'sudo apt-get install python3 python3-pip'
-            sh 'pip3 install conan'
-            sh 'conan profile detect'
-          }
-        }
-      
       }
     }
 
