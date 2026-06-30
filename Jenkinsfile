@@ -6,17 +6,30 @@ pipeline {
   }
 
   stages {
-    stage('Clean') {
-      steps {
-        script {
-          if (fileExists('${BUILD_DIR}')) {
-            echo 'build exists; removing'
-            sh "rm -rf ${BUILD_DIR}"
-            echo 'build removed'
-          } else {
-            echo 'no build exists'
+
+    stage('Pre') {
+      stages {
+
+        stage('Clean') {
+          steps {
+            script {
+              if (fileExists('${BUILD_DIR}')) {
+                echo 'build exists; removing'
+                sh "rm -rf ${BUILD_DIR}"
+                echo 'build removed'
+              } else {
+                echo 'no build exists'
+              }
+            }
           }
         }
+
+        stage('Configure Build Dependencies') {
+          steps {
+            sh 'conan profile detect'
+          }
+        }
+      
       }
     }
 
