@@ -26,7 +26,7 @@ pipeline {
 
         stage('Install Build Dependencies') {
           steps {
-            sh 'apt-get install python3 python3-pip'
+            sh 'sudo apt-get install python3 python3-pip'
             sh 'pip3 install conan'
             sh 'conan profile detect'
           }
