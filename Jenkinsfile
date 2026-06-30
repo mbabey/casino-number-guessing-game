@@ -1,31 +1,42 @@
 pipeline {
   agent any
+
+  environment {
+    BUILD_DIR = 'build'
+  }
+
   stages {
 
-    stage('Build') {
-      stages {
+    stage('Pre') {
 
-        stage('Clean') {
-          steps {
-            script {
-              if (fileExists('build')) {
-                echo 'build exists; removing'
-                sh 'rm -rf build'
-                echo 'build removed'
-              } else {
-                echo 'no build exists'
-              }
+      stage('Clean') {
+        steps {
+          script {
+            if (fileExists('${BUILD_DIR}')) {
+              echo 'build exists; removing'
+              sh "rm -rf ${BUILD_DIR}"
+              echo 'build removed'
+            } else {
+              echo 'no build exists'
             }
           }
         }
+      }
 
-        stage('Compile') {
-          steps {
-            sh 'cmake -B build -S .'
-            sh 'cmake --build build'
-          }
+      stage('Install Dependencies') {
+        steps {
+          sh 'pip install conan'
+          sh 'conan profile detect'
         }
-        
+      }
+
+    }
+
+    stage('Build') {
+      steps {
+        sh "conan install . --output-folder=${BUILD_DIR} --build=missing"
+        sh "cmake . -DCMAKE_TOOLCHAIN_FILE=${BUILD_DIR}/conan_toolchain.cmake -DCMAKE_BUILD_TYPE=Release"
+        sh "cmake --build ${BUILD_DIR}"
       }
     }
     
@@ -34,8 +45,8 @@ pipeline {
 
         stage('Unit Test') {
           steps {
-            sh './build/casino_game'
-            sh './build/test_game'
+            sh "./${BUILD_DIR}/casino_game"
+            sh "./${BUILD_DIR}/test_game"
           }
         }
 
@@ -50,7 +61,7 @@ pipeline {
 
     stage('Package') {
       steps {
-        sh 'tar -czf casino_game.tar.gz build/casino_game'
+        sh "tar -czf casino_game.tar.gz ${BUILD_DIR}/casino_game"
         archiveArtifacts artifacts: 'casino_game.tar.gz', fingerprint: true
       }
     }
