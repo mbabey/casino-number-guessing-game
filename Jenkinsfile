@@ -36,7 +36,7 @@ pipeline {
     stage('Build') {
       steps {
         sh "conan install . --output-folder=${BUILD_DIR} --build=missing"
-        sh "cmake . -DCMAKE_TOOLCHAIN_FILE=${BUILD_DIR}/conan_toolchain.cmake -DCMAKE_BUILD_TYPE=Release"
+        sh "cmake . -DCMAKE_TOOLCHAIN_FILE=${BUILD_DIR}/conan_toolchain.cmake -DCMAKE_BUILD_TYPE=Release -B ${BUILD_DIR}"
         sh "cmake --build ${BUILD_DIR}"
       }
     }
